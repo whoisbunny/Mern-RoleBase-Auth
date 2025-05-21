@@ -3,10 +3,11 @@ import { sendVerificationEmail } from "../services/email.service.js";
 import User from "../models/user.model.js";
 
 const generateToken = (userId) => {
-  return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "1d" });
+  return jwt.sign({ userId }, process.env.JWT_SECRET, {
+    expiresIn: process.env.TOKEN_EXPIRY,
+  });
 };
 
-// ✅ Register (Admin or Customer)
 export const register = async (req, res) => {
   try {
     const { firstName, lastName, email, password, role } = req.body;
@@ -41,20 +42,18 @@ export const register = async (req, res) => {
       expiresIn: "1h",
     });
     await sendVerificationEmail(user, token);
-    res
-      .status(201)
-      .json({
-        message:
-          "Verification Email has been sent to your email, Please verify your email.",
-      });
+    res.status(201).json({
+      message:
+        "Verification Email has been sent to your email, Please verify your email.",
+    });
   } catch (err) {
     console.log(err.message);
-    
+
     res.status(500).json({ message: err.message });
   }
 };
 
-// ✅ Verify Email
+// API Verify Email
 export const verifyEmail = async (req, res) => {
   try {
     const { token } = req.query;
@@ -72,13 +71,11 @@ export const verifyEmail = async (req, res) => {
 
     res.status(200).json({ message: "Email verified successfully" });
   } catch (err) {
-    res
-      .status(400)
-      .json({ message: "Invalid or expired token", error: err.message });
+    res.status(400).json({ message: err.message });
   }
 };
 
-// ✅ Admin Login (Customer Restriction)
+//  Admin Login (Customer Restriction)
 export const adminLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -108,12 +105,80 @@ export const adminLogin = async (req, res) => {
       token,
       user: {
         id: user._id,
-        name: user.firstName + " " + user.lastName,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
         role: user.role,
       },
     });
   } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Customer Login
+
+export const customerLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+    const isMatch = await user.matchPassword(password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+    if (user.role !== "customer") {
+      return res
+        .status(403)
+        .json({ message: "You are not allowed to login from here" });
+    }
+    if (!user.isVerified) {
+      return res
+        .status(401)
+        .json({ message: "Please verify your email first" });
+    }
+    const token = generateToken(user._id);
+    res.status(200).json({
+      message: "Login successful",
+      token,
+      user: {
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// get profile
+
+export const getProfile = async (req, res) => {
+  try {
+    const { _id } = req.user;
+
+    const user = await User.findById(_id).select("-password");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json({
+      message: "User profile",
+      user: {
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: error.message });
   }
 };

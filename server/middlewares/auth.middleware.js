@@ -1,4 +1,4 @@
-import User from "../models/user.model";
+import User from "../models/user.model.js";
 
 export const isAuthanticated = async (req, res, next) => {
   let token;
@@ -10,6 +10,11 @@ export const isAuthanticated = async (req, res, next) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const user = await User.findById(decoded?.userId);
         if (!user) throw new Error("Invalid token");
+        if (!user?.isVerified) {
+          return res
+            .status(401)
+            .json({ message: "Please verify your email first" });
+        }
         req.user = user;
         next();
       } else {
@@ -21,10 +26,3 @@ export const isAuthanticated = async (req, res, next) => {
   }
 };
 
-
-export const verifyRole = (...roles) => (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-        return res.status(403).json({ message: "Access denied" });
-    }
-    next();
-};
