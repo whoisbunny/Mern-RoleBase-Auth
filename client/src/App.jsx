@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import PublicRoute from "./routes/PublicRoute";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import Loading from "./components/Loading";
+import EmailVerify from "./pages/EmailVerify";
 const Home = lazy(() => import("./pages/Home"));
 const ErrorPage = lazy(() => import("./pages/ErrorPage"));
 const Signup = lazy(() => import("./pages/Signup"));
@@ -33,6 +34,16 @@ function App() {
           }
         />
         <Route
+          path="/email-verified"
+          element={
+            <Suspense fallback={<Loading />}>
+              <PublicRoute>
+                <EmailVerify />
+              </PublicRoute>
+            </Suspense>
+          }
+        />
+        <Route
           path="/*"
           element={
             <ProtectedRoute>
@@ -44,6 +55,7 @@ function App() {
           {/* <Route path="about" element={<About />} /> */}
           <Route path="*" element={<Navigate to="/404" />} />
         </Route>
+        
         <Route
           path="/404"
           element={
