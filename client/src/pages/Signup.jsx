@@ -11,7 +11,7 @@ const Signup = () => {
       <div
         className={`${
           dark ? "dark min-h-screen" : "min-h-screen"
-        } bg-gray-100 dark:bg-gray-900 flex flex-col justify-between w-full`}
+        } bg-gray-100 dark:bg-gray-800 flex flex-col justify-between w-full`}
       >
         <Header />
         <div className="text-center   ">

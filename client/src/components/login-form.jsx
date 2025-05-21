@@ -40,7 +40,7 @@ const LoginForm = () => {
         })
         .catch((error) => {
           console.error("Login error:", error);
-          toast.error(error.message);
+          toast.error(error);
         });
     }
     if (pathname === "/admin-login") {
@@ -58,7 +58,7 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto w-full p-6 bg-white rounded shadow-md dark:bg-gray-800">
+    <div className="max-w-md mx-auto w-full p-6 bg-white rounded shadow-md dark:bg-gray-900">
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <label

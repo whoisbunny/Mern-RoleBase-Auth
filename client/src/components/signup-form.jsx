@@ -30,13 +30,14 @@ const SignUpForm = () => {
     },
   });
   const onSubmit = async (data) => {
-    console.log("Form submitted:", data);
-
     await registerService(data)
       .then((response) => {
         console.log("Registration successful:", response);
 
-        toast.success(response.message);
+        toast.success(
+          response ||
+            "Verification Email has been sent to your email, Please verify your email."
+        );
         navigate("/");
       })
       .catch((error) => {
@@ -46,7 +47,7 @@ const SignUpForm = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto w-full p-6 bg-white rounded shadow-md dark:bg-gray-800">
+    <div className="max-w-md mx-auto w-full p-6 bg-white rounded shadow-md dark:bg-gray-900">
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <label

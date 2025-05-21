@@ -15,7 +15,7 @@ export default function ClientLayout() {
       <div className="flex flex-col min-h-screen w-full">
         {!isLoginPage && <Header />}
 
-        <main className="min-h-screen bg-gray-100 dark:bg-gray-900">
+        <main className="min-h-screen bg-gray-100 dark:bg-gray-800">
           <Suspense fallback={<Loading />}>
             <Outlet />
           </Suspense>
