@@ -30,7 +30,10 @@ export const registerService = async (data) => {
   try {
     const response = await API.post("auth/register", data);
     if (response.status === 200) {
+      console.log("Registration successful:", response.data);
+      
       return response.data;
+
     }
   } catch (error) {
     console.error("Registration error:", error);
