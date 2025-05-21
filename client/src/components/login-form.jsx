@@ -1,10 +1,13 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 import { toast } from "react-toastify";
-import { adminLoginService, clientLoginService } from "../services/auth.service";
+import {
+  adminLoginService,
+  clientLoginService,
+} from "../services/auth.service";
 
 const schema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -14,42 +17,42 @@ const schema = z.object({
 });
 
 const LoginForm = () => {
+  const [searchParams] = useSearchParams();
+  const email = searchParams.get("email");
 
-    const {pathname} = useLocation()
+  const { pathname } = useLocation();
   const navigate = useNavigate();
 
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      email: "",
+      email: email || "",
       password: "",
     },
   });
   const onSubmit = async (data) => {
-  
-    if(pathname==="/"){
-
-        await clientLoginService(data)
+    if (pathname === "/") {
+      await clientLoginService(data)
         .then((response) => {
-            console.log("Login successful:", response);
-            toast.success(response.message);
-            navigate("/home");
+          console.log("Login successful:", response);
+          toast.success(response.message);
+          navigate("/home");
         })
         .catch((error) => {
-            console.error("Login error:", error);
-            toast.error(error.message);
+          console.error("Login error:", error);
+          toast.error(error.message);
         });
     }
-    if(pathname==="/admin-login"){
-        await adminLoginService(data)
+    if (pathname === "/admin-login") {
+      await adminLoginService(data)
         .then((response) => {
-            console.log("Login successful:", response);
-            toast.success(response.message);
-            navigate("/home");
+          console.log("Login successful:", response);
+          toast.success(response.message);
+          navigate("/home");
         })
         .catch((error) => {
-            console.error("Login error:", error);
-            toast.error(error);
+          console.error("Login error:", error);
+          toast.error(error);
         });
     }
   };

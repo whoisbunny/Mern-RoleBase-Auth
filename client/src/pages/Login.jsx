@@ -7,8 +7,9 @@ import { useLocation } from "react-router-dom";
 
 const Login = () => {
   const { dark } = useContext(DarkModeContext);
-  const {pathname} = useLocation()
+  const { pathname } = useLocation();
   const isAdminLogin = pathname === "/admin-login";
+
   return (
     <>
       <div
@@ -18,7 +19,9 @@ const Login = () => {
       >
         <Header />
         <div className="text-center   ">
-          <h4 className="font-2xl dark:text-gray-50 font-semibold">Sign in As {isAdminLogin ? "Admin":"Customer"}</h4>
+          <h4 className="font-2xl dark:text-gray-50 font-semibold">
+            Sign in As {isAdminLogin ? "Admin" : "Cu"}
+          </h4>
           <div className="text-slate-500  text-base">
             Sign in to your account
           </div>

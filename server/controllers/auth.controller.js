@@ -67,9 +67,12 @@ export const verifyEmail = async (req, res) => {
     }
 
     user.isVerified = true;
+    const isAdmin = user.role === "admin";
     await user.save();
     res.redirect(
-      `${process.env.CLIENT}/?verified=true&email=${user.email}`
+      `${process.env.CLIENT}/${
+        isAdmin ? "admin-login" : ""
+      }?email=${user.email}`
     );
     // res.status(200).json({ message: "Email verified successfully" });
   } catch (err) {
