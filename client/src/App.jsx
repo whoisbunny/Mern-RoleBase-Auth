@@ -1,20 +1,43 @@
-import { lazy, Suspense } from "react";
+import React, { useState, useEffect, lazy, Suspense } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import PublicRoute from "./routes/PublicRoute";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import Loading from "./components/Loading";
-import EmailVerify from "./pages/EmailVerify";
+import ClientLayout from "./components/ClientLayout";
+import DarkModeContext from "./components/DarkModeContext";
+
 const Home = lazy(() => import("./pages/Home"));
 const ErrorPage = lazy(() => import("./pages/ErrorPage"));
 const Signup = lazy(() => import("./pages/Signup"));
 const Login = lazy(() => import("./pages/Login"));
 
 function App() {
+  const [dark, setDark] = useState(false);
+
+  useEffect(() => {
+    if (dark) {
+      document.body.classList.add("dark");
+    } else {
+      document.body.classList.remove("dark");
+    }
+  }, [dark]);
+
   return (
-    <>
+    <DarkModeContext.Provider value={{ dark, setDark }}>
+      
       <Routes>
         <Route
           path="/"
+          element={
+            <Suspense fallback={<Loading />}>
+              <PublicRoute>
+                <Login />
+              </PublicRoute>
+            </Suspense>
+          }
+        />
+        <Route
+          path="/admin-login"
           element={
             <Suspense fallback={<Loading />}>
               <PublicRoute>
@@ -33,16 +56,7 @@ function App() {
             </Suspense>
           }
         />
-        <Route
-          path="/email-verified"
-          element={
-            <Suspense fallback={<Loading />}>
-              <PublicRoute>
-                <EmailVerify />
-              </PublicRoute>
-            </Suspense>
-          }
-        />
+        
         <Route
           path="/*"
           element={
@@ -52,7 +66,6 @@ function App() {
           }
         >
           <Route path="home" element={<Home />} />
-          {/* <Route path="about" element={<About />} /> */}
           <Route path="*" element={<Navigate to="/404" />} />
         </Route>
         
@@ -65,7 +78,7 @@ function App() {
           }
         />
       </Routes>
-    </>
+    </DarkModeContext.Provider>
   );
 }
 
