@@ -36,6 +36,7 @@ const LoginForm = () => {
         .then((response) => {
           console.log("Login successful:", response);
           toast.success(response.message);
+          form.reset();
           navigate("/home");
         })
         .catch((error) => {
@@ -48,6 +49,7 @@ const LoginForm = () => {
         .then((response) => {
           console.log("Login successful:", response);
           toast.success(response.message);
+          form.reset();
           navigate("/home");
         })
         .catch((error) => {

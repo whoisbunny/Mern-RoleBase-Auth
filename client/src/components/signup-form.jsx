@@ -38,6 +38,7 @@ const SignUpForm = () => {
           response ||
             "Verification Email has been sent to your email, Please verify your email."
         );
+        form.reset();
         navigate("/");
       })
       .catch((error) => {
